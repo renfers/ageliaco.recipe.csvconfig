@@ -10,52 +10,25 @@ The recipe supports the following options:
    values it accepts, whether it is mandatory or optional and what the
    default value is if it is omitted.
 
-option1
-    Description for ``option1``...
+csvfile
+    this is a path (relative or absolute) to csv file that will be used by the recipe
 
-option2
-    Description for ``option2``...
+templates
+    one (or more) path to a template file => by default, it is expected a name with ".in" 
+    suffix and a file with the same name without the suffix ".in" will be generate in the
+    buildout directory. If you want to use another suffix or naming convention you will have
+    to use an alternative format with a ":" to separate the template path to the target path,
+    
+for instance::
 
+    templates = templates/instances.cfg.in
+    
+that will generate a ./instances.cfg file (in the buildout directory) or
 
-Example usage
-=============
+    templates = templates/init-cache.cfg:production/cache.cfg
+    
+that will generate a production/cache.cfg file
+     
 
-.. Note to recipe author!
-   ----------------------
-   zc.buildout provides a nice testing environment which makes it
-   relatively easy to write doctests that both demonstrate the use of
-   the recipe and test it.
-   You can find examples of recipe doctests from the PyPI, e.g.
-   
-     http://pypi.python.org/pypi/zc.recipe.egg
-
-   The PyPI page for zc.buildout contains documentation about the test
-   environment.
-
-     http://pypi.python.org/pypi/zc.buildout#testing-support
-
-   Below is a skeleton doctest that you can start with when building
-   your own tests.
-
-We'll start by creating a buildout that uses the recipe::
-
-    >>> write('buildout.cfg',
-    ... """
-    ... [buildout]
-    ... parts = test1
-    ...
-    ... [test1]
-    ... recipe = ageliaco.recipe.csvconfig
-    ... option1 = %(foo)s
-    ... option2 = %(bar)s
-    ... """ % { 'foo' : 'value1', 'bar' : 'value2'})
-
-Running the buildout gives us::
-
-    >>> print 'start', system(buildout) 
-    start...
-    Installing test1.
-    Unused options for test1: 'option2' 'option1'.
-    <BLANKLINE>
 
 
