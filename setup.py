@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '0.1'
+version = '0.2'
 
 long_description = (
     read('README.txt')
@@ -49,10 +49,10 @@ setup(name='ageliaco.recipe.csvconfig',
         'Topic :: Software Development :: Build Tools',
         'License :: OSI Approved :: Zope Public License',
         ],
-      keywords='',
-      author='',
-      author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      keywords='buildout', 'recipe',
+      author='Serge Renfer',
+      author_email='serge.renfer@gmail.com',
+      url='https://github.com/renfers/ageliaco.recipe.csvconfig',
       license='ZPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['ageliaco', 'ageliaco.recipe'],
