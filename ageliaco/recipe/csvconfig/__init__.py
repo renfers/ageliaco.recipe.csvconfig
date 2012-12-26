@@ -18,15 +18,53 @@ class Recipe(object):
     def read_csvconfig(self):
         aReader = csv.reader(open(self.csvfile))
         for index,row in enumerate(aReader):
-            print ' : '.join(row)
+            #print ' : '.join(row)
             if index == 0: #first row holds the variable names
                 for var in row:
-                    self.vars.append(var)
+                    self.vars.append(var.strip())
                 continue
             d = {}
             for i, var in enumerate(row):
-                d[self.vars[i]] = var
+                d[self.vars[i]] = var.strip()
             self.lines.append(d)
+
+    def multikeydict(self,keys, lines):
+        """generate a dict with 'keys' (list of variables names) as index key
+        the value part of this dict is a list of dict that holds the values for
+        the different columns"""
+        newdict = {}
+
+        for line in lines:
+            newkey_value = []
+            newkey = ''
+            for key in keys:
+                newkey_value.append(line[key])
+            newkey_value.sort()
+            newkey = ','.join(newkey_value)
+            if newkey not in newdict.keys():
+                newdict[newkey] = []
+            newdict[newkey].append(line)
+        return newdict
+                
+                
+    def checkkey(self,word):
+        """check either on the left part of an option or on a section if there is, or are
+        keys => returns a list of keys or an empty list if nothing"""
+        match = self.c_re.search(word)
+        i = 0
+        keylist = []
+        while match:
+            var = match.group(1)
+            to_replace = match.group(0)
+            length = len(to_replace) + 1
+            #import pdb; pdb.set_trace()
+            if var in self.vars:
+                keylist.append(var)
+            i = match.pos + length
+            match = self.c_re.search(word, i)
+        #print "checkkey : ", keylist
+        return keylist
+                
 
     def expandvar(self, word, line):
         """expand variables if found in vars according to dict 'line'
@@ -34,7 +72,9 @@ class Recipe(object):
         """
         match = self.c_re.search(word)
         i = 0
-        while match:
+        while True:
+            if not match:
+                break
             var = match.group(1)
             to_replace = match.group(0)
             length = len(to_replace) + 1
@@ -44,47 +84,56 @@ class Recipe(object):
                 length = len(line[var]) + 1
             i = match.pos + length
             match = self.c_re.search(word, i)
+        #print "expandvar : ", word, self.vars
         return word
 
-    def expandvars_on_section(self, config, buildout, section, newsection, line):
-        """apply a list (line) of vars in section"""
+                
+    def expandsection(self,section,config,buildout,keylist,dictlist):
+        """expand section with variables"""
+        newsection = self.expandvar(section,dictlist[0])
         if not buildout.has_section(newsection):
             buildout.add_section(newsection)
         for option in config.options(section):
             #import pdb; pdb.set_trace()
             opt = config.get(section, option)
-            newopt = self.expandvar(opt, line)
-            buildout.set(newsection, option, newopt)
+            match = self.c_re.search(option)
+            if match: #option name contains a variable
+                newkeys = self.checkkey(option)
+                keydict = self.multikeydict(newkeys,dictlist)
+                for key in keydict.keys():
+                    buildout = self.expandoption(option,opt,newsection,buildout,keydict[key])
+            else:#eventually right-part contains a variable
+                buildout = self.expandoption(option,opt,newsection,buildout,dictlist)
         return buildout
-                
+        
+    def expandoption(self,option,optionvalue,section,buildout,dictlist):
+        """expand section with variables"""
+        newoption = self.expandvar(option,dictlist[0])
+        if not buildout.has_section(section):
+            buildout.add_section(section)
+        newopts = []
+        for line in dictlist:
+            #import pdb; pdb.set_trace()
+            newopt = self.expandvar(optionvalue, line)
+            if newopt not in newopts:
+                newopts.append(newopt)
+        newoptionvalue = '\n\t'.join(newopts)
+        buildout.set(section, newoption, newoptionvalue)
+        return buildout
+        
 
     def expandall_on_section(self, config, buildout, section):
         """apply all vars on a section"""
         # first expand section name if necessary
         match = self.c_re.search(section)
         if match:
-            for line in self.lines:
-                newsection = self.expandvar(section, line)
-                #import pdb; pdb.set_trace()
-                if newsection != section:
-                    buildout = self.expandvars_on_section(config, buildout, 
-                                                    section, newsection, line)
+            newkeys = self.checkkey(section)
+            keydict = self.multikeydict(newkeys,self.lines)
+            for key in keydict.keys():
+                buildout = self.expandsection(section,config,buildout,key,keydict[key])
+        
         else:
-            if not buildout.has_section(section):
-                buildout.add_section(section)
-            for option in config.options(section):
-                opt = config.get(section, option)
-                match = self.c_re.search(opt)
-                if match:
-                    opts = []
-                    #import pdb; pdb.set_trace()
-                    for line in self.lines:
-                        newopt = self.expandvar(opt, line)
-                        if newopt!=opt and newopt not in opts:
-                            opts.append(newopt)
-                    buildout.set(section, option, ' '.join(opts))
-                else:    
-                    buildout.set(section, option, opt)
+            buildout = self.expandsection(section,config,buildout,self.vars,self.lines)
         return buildout 
 
     def apply_variables(self,template,target):
