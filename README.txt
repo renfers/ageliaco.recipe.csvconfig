@@ -225,4 +225,86 @@ instances.cfg.in exposes another kind of variable substitution, where the variab
 in the section identifier => the section with the "subdomain" variable will epxand in as
 many sections as there are different values for this variable in the csv file.
 
-This recipe is interesting when used in conjonction with zc.recipe.macro
+CSV as flat database :
+----------------------
+Let's see another example to show you that the csv file can be just a flat representation 
+of a relational database.
+
+The csv file, testmultikey.csv::
+
+    prenom, nom, naissance, profession
+    bob,wut,1961,doc
+    marie,wut,1962,maitresse
+    serge,ren,1960,prof
+    coco,ren,1961,maitresse
+    
+The template, templates/contact.cfg.in::
+
+    [contact]
+    ${prenom}-${nom}-${naissance} = ${profession}
+    
+    [famille-${nom}]
+    ${prenom}-naissance = ${naissance}
+    ${prenom}-profession = ${profession}
+    
+    [annee-de-naissance-${naissance}]
+    ${prenom}-${nom} = ${profession}
+    
+    [${profession}]
+    nom = ${prenom}-${nom}-${naissance}
+
+and now the buildout, buildout.cfg::
+
+    [buildout]
+    
+    parts = main
+    
+    develop = src/ageliaco.recipe.csvconfig
+    eggs =
+        ageliaco.recipe.csvconfig
+        
+    [main]
+    recipe = ageliaco.recipe.csvconfig
+    templates = templates/contact.cfg.in
+    csvfile = testmultikey.csv
+
+and the result of `bin/buildout`, contact.cfg::
+
+    [contact]
+    bob-wut-1961 = doc
+    coco-ren-1961 = maitresse
+    marie-wut-1962 = maitresse
+    serge-ren-1960 = prof
+    
+    [famille-ren]
+    coco-naissance = 1961
+    serge-naissance = 1960
+    coco-profession = maitresse
+    serge-profession = prof
+    
+    [famille-wut]
+    bob-naissance = 1961
+    marie-naissance = 1962
+    bob-profession = doc
+    marie-profession = maitresse
+    
+    [annee-de-naissance-1961]
+    bob-wut = doc
+    coco-ren = maitresse
+    
+    [annee-de-naissance-1962]
+    marie-wut = maitresse
+    
+    [annee-de-naissance-1960]
+    serge-ren = prof
+    
+    [maitresse]
+    nom = marie-wut-1962
+            coco-ren-1961
+    
+    [doc]
+    nom = bob-wut-1961
+    
+    [prof]
+    nom = serge-ren-1960
+
