@@ -150,7 +150,7 @@ class Recipe(object):
         for sect in config.sections():
             newconfig = self.expandall_on_section(config, newconfig, sect)
         #import pdb; pdb.set_trace()
-        with open(target, 'wb') as configfile:
+        with open(target, 'wb+') as configfile:
             newconfig.write(configfile)                            
                     
 
@@ -160,7 +160,7 @@ class Recipe(object):
         self.templates = self.options.pop('templates', name).strip().split()
         self.lines = []    
         self.vars = []
-        self.c_re = re.compile(r'\$\{([^:|}]*)\}')
+        self.c_re = re.compile(r'\$\$\{([^:|}]*)\}')
     
     #template name may come under the form "filepath:target" both being relative path from 
     #buildout-dir

@@ -1,3 +1,10 @@
+0.6 (2013-01-07)
+----------------
+
+- change variable call from ${} to $${} to easily substitute variables embedded in buildout variables
+- added "+" to the generated file mode ("wb+" instead of "wb")
+  ["renfers"]
+
 0.5 (2012-12-28)
 ----------------
 
