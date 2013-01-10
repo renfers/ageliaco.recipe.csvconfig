@@ -1,3 +1,11 @@
+0.7 (2013-01-10)
+----------------
+
+- changed from ConfigParser to configparser
+- added "+=" and "-=" to the delimiters, but could not recreate the same operator on options
+  it passes automatically to "=" (=> still a feature to implement)
+  ["renfers"]
+  
 0.6 (2013-01-07)
 ----------------
 

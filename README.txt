@@ -39,11 +39,11 @@ Let's make a *templates* directory in our buildout and we put our first template
 
 instances.cfg.in::
 
-    [${subdomain}-parameters]
-    port = ${port}
+    [$${subdomain}-parameters]
+    port = $${port}
     host = 127.0.0.1
-    plone = ${plone}
-    name = ${instance}
+    plone = $${plone}
+    name = $${instance}
 
 and a second one
 
@@ -51,25 +51,25 @@ varsetting.cfg.in::
 
     [var-settings]
     vh-targets =
-        ${subdomain}:${subdomain}-parameters
+        $${subdomain}:$${subdomain}-parameters
     
     instances-targets =
-        ${instance}:${instance}-parameters
+        $${instance}:$${instance}-parameters
     
     backup-targets =
-        backup-${instance}:${instance}-parameters
+        backup-$${instance}:$${instance}-parameters
     
     cron-targets =
-        cron-${instance}:${instance}-parameters
+        cron-$${instance}:$${instance}-parameters
     
     supervisor =
-        20 ${instance} ${buildout:directory}/bin/${instance} [console] true ${users:zope}
+        20 $${instance} ${buildout:directory}/bin/$${instance} [console] true ${users:zope}
     
     eventlistener =
-        ${instance}-HttpOk TICK_60 ${buildout:bin-directory}/httpok [-m ${emailadmin} -p ${instance} http://localhost:11011]
+        $${instance}-HttpOk TICK_60 ${buildout:bin-directory}/httpok [-m $${emailadmin} -p $${instance} http://localhost:11011]
 
 
-Notice that our variables have the ``${var}`` format.
+Notice that our variables have the ``$${var}`` format.
 
 In a buildout file you will have a part that has the following form:
 
@@ -241,17 +241,17 @@ The csv file, testmultikey.csv::
 The template, templates/contact.cfg.in::
 
     [contact]
-    ${prenom}-${nom}-${naissance} = ${profession}
+    $${prenom}-$${nom}-$${naissance} = $${profession}
     
-    [famille-${nom}]
-    ${prenom}-naissance = ${naissance}
-    ${prenom}-profession = ${profession}
+    [famille-$${nom}]
+    $${prenom}-naissance = $${naissance}
+    $${prenom}-profession = $${profession}
     
-    [annee-de-naissance-${naissance}]
-    ${prenom}-${nom} = ${profession}
+    [annee-de-naissance-$${naissance}]
+    $${prenom}-$${nom} = $${profession}
     
-    [${profession}]
-    nom = ${prenom}-${nom}-${naissance}
+    [$${profession}]
+    nom = $${prenom}-$${nom}-$${naissance}
 
 and now the buildout, buildout.cfg::
 

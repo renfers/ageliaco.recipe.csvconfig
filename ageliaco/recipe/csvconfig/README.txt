@@ -19,6 +19,9 @@ templates
     buildout directory. If you want to use another suffix or naming convention you will have
     to use an alternative format with a ":" to separate the template path to the target path,
     
+    This alternate format with ":" is also interesting if you want to generate a file in
+    a different directory than the buildout-directory!
+    
 for instance::
 
     templates = templates/instances.cfg.in
@@ -27,7 +30,8 @@ that will generate a ./instances.cfg file (in the buildout directory) or
 
     templates = templates/init-cache.cfg:production/cache.cfg
     
-that will generate a production/cache.cfg file
+that will generate a production/cache.cfg file (notice that in this example it is a relative path, 
+but it can also be a full path)
      
 
 

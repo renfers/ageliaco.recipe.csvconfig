@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '0.6'
+version = '0.7'
 
 long_description = (
     read('README.txt')
@@ -59,8 +59,9 @@ setup(name='ageliaco.recipe.csvconfig',
       include_package_data=True,
       zip_safe=False,
       install_requires=['setuptools',
-                        'zc.buildout'
+                        'zc.buildout',
                         # -*- Extra requirements: -*-
+                        'configparser',
                         ],
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),

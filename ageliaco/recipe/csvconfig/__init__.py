@@ -6,7 +6,7 @@ import os.path
 import zc.buildout.buildout
 import pprint
 from zc.buildout.buildout import Options
-import ConfigParser
+import configparser
 import logging
             
         
@@ -69,22 +69,34 @@ class Recipe(object):
     def expandvar(self, word, line):
         """expand variables if found in vars according to dict 'line'
             returns word with var subsitution when possible
+            rule is that if there's a variable in word and line as an empty result
+            for this variable, then the returned word is set to ''
+            the same is true if for all variable of a word line provides an empty result
         """
         match = self.c_re.search(word)
         i = 0
+        nbmatch = 0
+        empty = 0
+        original = word[:]
         while True:
             if not match:
                 break
+            nbmatch += 1
             var = match.group(1)
             to_replace = match.group(0)
             length = len(to_replace) + 1
             #import pdb; pdb.set_trace()
             if var in self.vars:
+                if line[var] == '':
+                    empty += 1
                 word = word.replace(to_replace,line[var])
                 length = len(line[var]) + 1
             i = match.pos + length
             match = self.c_re.search(word, i)
         #print "expandvar : ", word, self.vars
+        if nbmatch and nbmatch == empty:
+            #import pdb; pdb.set_trace()
+            return ''
         return word
 
                 
@@ -140,8 +152,8 @@ class Recipe(object):
         """ apply variables in template and save it as new config file in target
         """
         
-        config = ConfigParser.SafeConfigParser()
-        newconfig = ConfigParser.SafeConfigParser()
+        config = configparser.ConfigParser(delimiters=('=', '+=', '-='))
+        newconfig = configparser.ConfigParser(delimiters=('=', '+=', '-='))
         config.read(template)
         #import pdb; pdb.set_trace()
         # first read sections to find variables in vars
@@ -176,7 +188,7 @@ class Recipe(object):
 
         else:
             target = template.split('/')[-1][0:-3]
-        return template, target
+        return template.strip(), target.strip()
 
 
 
