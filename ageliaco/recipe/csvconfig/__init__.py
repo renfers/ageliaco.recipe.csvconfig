@@ -41,9 +41,10 @@ class Recipe(object):
                 newkey_value.append(line[key])
             newkey_value.sort()
             newkey = ','.join(newkey_value)
-            if newkey not in newdict.keys():
-                newdict[newkey] = []
-            newdict[newkey].append(line)
+            if newkey:
+                if newkey not in newdict.keys():
+                    newdict[newkey] = []
+                newdict[newkey].append(line)
         return newdict
                 
                 
@@ -54,6 +55,8 @@ class Recipe(object):
         i = 0
         keylist = []
         while match:
+            #print match.group()
+            #import pdb; pdb.set_trace()
             var = match.group(1)
             to_replace = match.group(0)
             length = len(to_replace) + 1
@@ -141,6 +144,7 @@ class Recipe(object):
         if match:
             newkeys = self.checkkey(section)
             keydict = self.multikeydict(newkeys,self.lines)
+            #import pdb; pdb.set_trace()
             for key in keydict.keys():
                 buildout = self.expandsection(section,config,buildout,key,keydict[key])
         
@@ -173,6 +177,7 @@ class Recipe(object):
         self.lines = []    
         self.vars = []
         self.c_re = re.compile(r'\$\$\{([^:|}]*)\}')
+        #self.c_re = re.compile(r'\$\${(.*?)}')
     
     #template name may come under the form "filepath:target" both being relative path from 
     #buildout-dir
