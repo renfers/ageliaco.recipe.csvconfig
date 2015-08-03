@@ -89,7 +89,7 @@ class Recipe(object):
             to_replace = match.group(0)
             length = len(to_replace) + 1
             #import pdb; pdb.set_trace()
-            if var in self.vars:
+            if var in self.vars and var in line:
                 if line[var] == '':
                     empty += 1
                 word = word.replace(to_replace,line[var])

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: ageliaco.recipe.csvconfig
-Version: 0.10
+Version: 0.12
 Summary: Use a CSV file to populate buildout templates
 Home-page: https://github.com/renfers/ageliaco.recipe.csvconfig
 Author: Serge Renfer
