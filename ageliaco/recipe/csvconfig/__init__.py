@@ -15,8 +15,8 @@ import logging
 
 class Recipe(object):
     """zc.buildout recipe"""
-    def read_csvconfig(self):
-        aReader = csv.reader(open(self.csvfile))
+    def read_csvconfig(self,file):
+        aReader = csv.reader(open(file))
         for index,row in enumerate(aReader):
             #print ' : '.join(row)
             if index == 0: #first row holds the variable names
@@ -205,7 +205,8 @@ class Recipe(object):
         # will remove all returned files upon reinstall.
         ret = []
         new_sections = []
-        self.read_csvconfig()
+        for file in self.csvfile:
+            self.read_csvconfig()
         for template, target in (self.parse_template(template) for template in self.templates):
             self.apply_variables(template,target)
             logging.getLogger(self.name).info(
