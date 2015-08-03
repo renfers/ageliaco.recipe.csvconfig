@@ -172,7 +172,7 @@ class Recipe(object):
 
     def __init__(self, buildout, name, options):
         self.buildout, self.name, self.options = buildout, name, options
-        self.csvfile = self.options.pop('csvfile').strip()
+        self.csvfile = self.options.pop('csvfile', name).strip().split()
         self.templates = self.options.pop('templates', name).strip().split()
         self.lines = []    
         self.vars = []
