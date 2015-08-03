@@ -18,3 +18,5 @@ ageliaco/recipe/csvconfig/README.txt
 ageliaco/recipe/csvconfig/__init__.py
 ageliaco/recipe/csvconfig/tests/__init__.py
 ageliaco/recipe/csvconfig/tests/test_docs.py
+dist/ageliaco.recipe.csvconfig-0.10-py2.7.egg
+dist/ageliaco.recipe.csvconfig-0.10.tar.gz

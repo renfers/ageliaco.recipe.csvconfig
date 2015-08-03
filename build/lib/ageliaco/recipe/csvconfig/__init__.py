@@ -206,7 +206,7 @@ class Recipe(object):
         ret = []
         new_sections = []
         for file in self.csvfile:
-            self.read_csvconfig()
+            self.read_csvconfig(file)
         for template, target in (self.parse_template(template) for template in self.templates):
             self.apply_variables(template,target)
             logging.getLogger(self.name).info(
